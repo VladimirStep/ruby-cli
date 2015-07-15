@@ -1,7 +1,7 @@
 require "spec_helper"
 
-RSpec.describe "Wimdu CLI" do
-  let(:exe) { File.expand_path('../../bin/wimdu', __FILE__) }
+RSpec.describe "Drkmen CLI" do
+  let(:exe) { File.expand_path('../../bin/drkmen', __FILE__) }
 
   describe "new" do
     let(:cmd) { "#{exe} new" }

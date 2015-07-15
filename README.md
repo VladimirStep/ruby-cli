@@ -1,9 +1,3 @@
-# Wimdu coding challenge
-
-On wimdu.com, people can list their place to rent out. Wouldn't it be
-great if there was a more nerdy way to enter your data? How about a
-CLI?
-
 ## The task
 
 Build a standalone app that allows users to list their place via a
@@ -32,19 +26,19 @@ should appear in the list of all properties.
 
 An example session could look like this:
 
-    $ wimdu list
+    $ drkmen list
     No properties found.
 
-    $ wimdu new
+    $ drkmen new
     Starting with new property ABC1DEF2.
 
-    Title: Amazing room at Wimdu Office
+    Title: Amazing room
     Address: ^C
 
-    $ wimdu list
+    $ drkmen list
     No offers found.
 
-    $ wimdu continue ABC1DEF2
+    $ drkmen continue ABC1DEF2
     Continuing with ABC1DEF2
 
     Address: Voltastr. 5, 13355 Berlin
@@ -55,7 +49,7 @@ An example session could look like this:
 
     Max guests: 2
     ^C
-    $ wimdu continue ABC1DEF2
+    $ drkmen continue ABC1DEF2
     Continuing with ABC1DEF2
 
     Email: foo@example.com
@@ -63,29 +57,15 @@ An example session could look like this:
 
     Great job! Listing ABC1DEF2 is complete!
 
-    $ wimdu list
+    $ drkmen list
     Found 1 offer.
 
-    ABC1DEF2: Amazing Room at Wimdu Office
+    ABC1DEF2: Amazing Room
 
 ## Hints
 
 It's totally fine to use 3rd party libraries like ruby's gems. You're
 free to choose your storage mechanism/database. Just use the right
 tool for the job.
-
-It would be nice if you could send your results as a
-repository. Either put it online or if you'd rather not have it be
-public send it e.g. as a git bundle. Here's how to do that:
-
-    $ git bundle create jane-schmoe-wimdu-cli.bundle master
-
-Just to check if stuff worked, you can clone from this file with
-
-    $ git clone -b master jane-schmoe-wimdu-cli.bundle
-
-Mercurial also has a bundle feature. If you use any other version
-control system we'd appreciate instructions on how to recreate the
-repo.
 
 Happy hacking!
