@@ -68,4 +68,6 @@ It's totally fine to use 3rd party libraries like ruby's gems. You're
 free to choose your storage mechanism/database. Just use the right
 tool for the job.
 
+Expected time: 2 hours
+
 Happy hacking!
