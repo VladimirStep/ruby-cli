@@ -1,21 +1,45 @@
-#!/bin/bash
+#!/usr/bin/env ruby
 
-# This is a stub to make the feature spec pass. You probably don't
-# want to build this in shell script.
+require 'rubygems'
+require 'commander/import'
 
-case $1 in
-    new)
-        echo "Starting with new property ABC1DEF2."
-        echo
-        echo -n "Title: "
-        read title
-        echo -n "Address: "
-        read address
-        ;;
-    "continue")
-        echo "Continuing with property $2."
-        echo
-        echo -n "Address:"
-        read address
-        ;;
-esac
+program :name, 'drkmen'
+program :version, '0.0.1'
+program :description, 'Create and list user places via CLI'
+
+command :list do |c|
+  c.syntax = 'drkmen list [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Drkmen::Commands::List
+  end
+end
+
+command :new do |c|
+  c.syntax = 'drkmen new [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Drkmen::Commands::New
+    puts 'Starting with new property'
+    puts 'Title: '
+    puts 'Address: '
+  end
+end
+
+command :continue do |c|
+  c.syntax = 'drkmen continue [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Drkmen::Commands::Continue
+  end
+end
+
