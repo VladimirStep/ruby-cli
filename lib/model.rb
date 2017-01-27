@@ -8,7 +8,7 @@ ActiveRecord::Schema.define do
     create_table 'places' do |t|
       t.string 'identifier'
       t.string 'title'
-      t.string 'type'
+      t.string 'app_type'
       t.string 'address'
       t.integer 'rate'
       t.integer 'capacity'
@@ -22,7 +22,7 @@ end
 class Place < ActiveRecord::Base
   validates :identifier, uniqueness: true
   validates :title, presence: true, length: { minimum: 2, maximum: 20 }
-  validates :type, presence: true, inclusion: { in: ['holiday home', 'apartment', 'private room'] }
+  validates :app_type, presence: true, inclusion: { in: ['holiday home', 'apartment', 'private room'] }
   validates :address, presence: true, length: { minimum: 2, maximum: 50 }
   validates :rate, presence: true, numericality: { only_integer: true }
   validates :capacity, presence: true, numericality: { only_integer: true }
@@ -33,11 +33,18 @@ class Place < ActiveRecord::Base
     self.valid?
     self.errors[attribute_name].blank?
   end
+
+  def check_for_confirmation
+    if self.valid?
+      self.confirmation = true
+      self.save
+    end
+  end
 end
 
 PROMPTS = { title: 'Title: ',
             address: 'Address: ',
-            type: 'Property type: ',
+            app_type: 'Property type: ',
             rate: 'Nightly rate in EUR: ',
             capacity: 'Max guests: ',
             email: 'Email: ',

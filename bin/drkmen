@@ -19,7 +19,7 @@ command :list do |c|
     if @places.count > 0
       puts "Found #{@places.count} offer.\n\n"
       @places.each do |place|
-        puts "#{place.id}: #{place.title}"
+        puts "#{place.identifier}: #{place.title}"
       end
     else
       puts 'No properties found.'
@@ -59,12 +59,11 @@ def create_attributes(place)
     unless place[attribute_name] || attribute_name == 'confirmation'
       while place[attribute_name].nil?
         input = ''
-        print PROMPTS[attribute_name.to_sym]
-        ARGV.clear
-        input = gets.chomp
+        input = ask(PROMPTS[attribute_name.to_sym])
         place[attribute_name] = input
         if place.valid_attribute?(attribute_name)
           place.save(validate: false)
+          place.check_for_confirmation
         else
           puts place.errors[attribute_name]
           place[attribute_name] = nil
