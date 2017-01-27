@@ -48,7 +48,13 @@ command :continue do |c|
   c.example 'description', 'command example'
   c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-
+    @place = Place.find_by(identifier: args[0])
+    if @place
+      puts "Continuing with #{@place.identifier}.\n\n"
+      create_attributes(@place)
+    else
+      puts 'No properties found.'
+    end
   end
 end
 
