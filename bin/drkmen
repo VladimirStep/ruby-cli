@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'commander/import'
+require './../lib/model.rb'
 
 program :name, 'drkmen'
 program :version, '0.0.1'
@@ -14,7 +15,15 @@ command :list do |c|
   c.example 'description', 'command example'
   c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Drkmen::Commands::List
+    @places = Place.where(confirmation: true)
+    if @places.count > 0
+      puts "Found #{@places.count} offer.\n\n"
+      @places.each do |place|
+        puts "#{place.id}: #{place.title}"
+      end
+    else
+      puts 'No properties found.'
+    end
   end
 end
 
@@ -25,10 +34,10 @@ command :new do |c|
   c.example 'description', 'command example'
   c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Drkmen::Commands::New
-    puts 'Starting with new property'
-    puts 'Title: '
-    puts 'Address: '
+    @place = Place.new(identifier: SecureRandom.hex(4).upcase)
+    @place.save(validate: false)
+    puts "Starting with new property #{@place.identifier}.\n\n"
+    create_attributes(@place)
   end
 end
 
@@ -39,7 +48,28 @@ command :continue do |c|
   c.example 'description', 'command example'
   c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Drkmen::Commands::Continue
+
   end
 end
 
+def create_attributes(place)
+  attributes = place.attribute_names
+
+  attributes.each do |attribute_name|
+    unless place[attribute_name] || attribute_name == 'confirmation'
+      while place[attribute_name].nil?
+        input = ''
+        print PROMPTS[attribute_name.to_sym]
+        ARGV.clear
+        input = gets.chomp
+        place[attribute_name] = input
+        if place.valid_attribute?(attribute_name)
+          place.save(validate: false)
+        else
+          puts place.errors[attribute_name]
+          place[attribute_name] = nil
+        end
+      end
+    end
+  end
+end
