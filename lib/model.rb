@@ -38,6 +38,7 @@ class Place < ActiveRecord::Base
     if self.valid?
       self.confirmation = true
       self.save
+      puts "Great job! Listing #{self.identifier} is complete!"
     end
   end
 end

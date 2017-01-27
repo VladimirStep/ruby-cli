@@ -17,7 +17,7 @@ command :list do |c|
   c.action do |args, options|
     @places = Place.where(confirmation: true)
     if @places.count > 0
-      puts "Found #{@places.count} offer.\n\n"
+      puts "Found #{@places.count} offer."
       @places.each do |place|
         puts "#{place.identifier}: #{place.title}"
       end
@@ -36,7 +36,7 @@ command :new do |c|
   c.action do |args, options|
     @place = Place.new(identifier: SecureRandom.hex(4).upcase)
     @place.save(validate: false)
-    puts "Starting with new property #{@place.identifier}.\n\n"
+    puts "Starting with new property #{@place.identifier}."
     create_attributes(@place)
   end
 end
@@ -50,7 +50,7 @@ command :continue do |c|
   c.action do |args, options|
     @place = Place.find_by(identifier: args[0])
     if @place
-      puts "Continuing with #{@place.identifier}.\n\n"
+      puts "Continuing with #{@place.identifier}."
       create_attributes(@place)
     else
       puts 'No properties found.'
