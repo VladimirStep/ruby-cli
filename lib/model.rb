@@ -1,11 +1,12 @@
 require 'sqlite3'
 require 'active_record'
 
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: '../db.sqlite3')
+ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: './../db/db.sqlite3')
 
 ActiveRecord::Schema.define do
-  unless ActiveRecord::Base.connection.tables.include? 'places'
+  unless ActiveRecord::Base.connection.data_source_exists? 'places'
     create_table 'places' do |t|
+      t.string 'identifier'
       t.string 'title'
       t.string 'type'
       t.string 'address'
@@ -13,10 +14,31 @@ ActiveRecord::Schema.define do
       t.integer 'capacity'
       t.string 'email'
       t.string 'phone'
+      t.boolean  'confirmation', default: false
     end
   end
 end
 
 class Place < ActiveRecord::Base
+  validates :identifier, uniqueness: true
+  validates :title, presence: true, length: { minimum: 2, maximum: 20 }
+  validates :type, presence: true, inclusion: { in: ['holiday home', 'apartment', 'private room'] }
+  validates :address, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :rate, presence: true, numericality: { only_integer: true }
+  validates :capacity, presence: true, numericality: { only_integer: true }
+  validates :email, presence: true, length: { minimum: 2, maximum: 20 }
+  validates :phone, presence: true, length: { minimum: 5, maximum: 10 }
 
+  def valid_attribute?(attribute_name)
+    self.valid?
+    self.errors[attribute_name].blank?
+  end
 end
+
+PROMPTS = { title: 'Title: ',
+            address: 'Address: ',
+            type: 'Property type: ',
+            rate: 'Nightly rate in EUR: ',
+            capacity: 'Max guests: ',
+            email: 'Email: ',
+            phone: 'Phone number: ' }
