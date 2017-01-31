@@ -8,8 +8,8 @@ ActiveRecord::Schema.define do
     create_table 'places' do |t|
       t.string 'identifier'
       t.string 'title'
-      t.string 'app_type'
       t.string 'address'
+      t.string 'app_type'
       t.integer 'rate'
       t.integer 'capacity'
       t.string 'email'
@@ -22,8 +22,8 @@ end
 class Place < ActiveRecord::Base
   validates :identifier, uniqueness: true
   validates :title, presence: true, length: { minimum: 2, maximum: 20 }
-  validates :app_type, presence: true, inclusion: { in: ['holiday home', 'apartment', 'private room'] }
   validates :address, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :app_type, presence: true, inclusion: { in: ['holiday home', 'apartment', 'private room'] }
   validates :rate, presence: true, numericality: { only_integer: true }
   validates :capacity, presence: true, numericality: { only_integer: true }
   validates :email, presence: true, length: { minimum: 2, maximum: 20 }

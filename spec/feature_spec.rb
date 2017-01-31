@@ -10,8 +10,17 @@ RSpec.describe "Drkmen CLI" do
     it "allows for entering data" do
       expect(process).to have_output("Starting with new property")
       expect(process).to have_output("Title: ")
+      p
+      p "="*100
+      p process
       process.type "My Title"
+      p
+      p "="*100
+      p process
       expect(process).to have_output("Address: ")
+      p
+      p "="*100
+      p process
 
       # FIXME: Please extend!
 

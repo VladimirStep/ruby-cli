@@ -31,5 +31,3 @@ doc/
 .secret
 .env
 .ruby-gemset
-
-public/uploads/*

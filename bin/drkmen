@@ -2,5 +2,134 @@
 
 require 'rubygems'
 require 'commander/import'
-require './../lib/model.rb'
-require './../lib/actions.rb'
+require 'sqlite3'
+require 'active_record'
+require 'yaml'
+
+# configuration = YAML::load(File.open('./../config/database.yml'))
+# ActiveRecord::Base.configurations = configuration
+# ActiveRecord::Base.establish_connection(:development)
+# ActiveRecord::Base.establish_connection(:test)
+ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: './../db/db.sqlite3')
+
+ActiveRecord::Schema.define do
+  unless ActiveRecord::Base.connection.data_source_exists? 'places'
+    create_table 'places' do |t|
+      t.string 'identifier'
+      t.string 'title'
+      # t.string 'app_type'
+      t.string 'address'
+      t.integer 'rate'
+      t.integer 'capacity'
+      t.string 'email'
+      t.string 'phone'
+      t.boolean  'confirmation', default: false
+    end
+  end
+end
+
+class Place < ActiveRecord::Base
+  validates :identifier, uniqueness: true
+  validates :title, presence: true, length: { minimum: 2, maximum: 20 }
+  # validates :app_type, presence: true, inclusion: { in: ['holiday home', 'apartment', 'private room'] }
+  validates :address, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :rate, presence: true, numericality: { only_integer: true }
+  validates :capacity, presence: true, numericality: { only_integer: true }
+  validates :email, presence: true, length: { minimum: 2, maximum: 20 }
+  validates :phone, presence: true, length: { minimum: 5, maximum: 10 }
+
+  def valid_attribute?(attribute_name)
+    self.valid?
+    self.errors[attribute_name].blank?
+  end
+
+  def check_for_confirmation
+    if self.valid?
+      self.confirmation = true
+      self.save
+      puts "Great job! Listing #{self.identifier} is complete!"
+    end
+  end
+end
+
+PROMPTS = { title: 'Title: ',
+            address: 'Address: ',
+            app_type: 'Property type: ',
+            rate: 'Nightly rate in EUR: ',
+            capacity: 'Max guests: ',
+            email: 'Email: ',
+            phone: 'Phone number: ' }
+
+program :name, 'drkmen'
+program :version, '0.0.1'
+program :description, 'Create and list user places via CLI'
+
+command :list do |c|
+  c.syntax = 'drkmen list'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do
+    @places = Place.where(confirmation: true)
+    if @places.count > 0
+      puts "Found #{@places.count} offer."
+      @places.each do |place|
+        puts "#{place.identifier}: #{place.title}"
+      end
+    else
+      puts 'No properties found.'
+    end
+  end
+end
+
+command :new do |c|
+  c.syntax = 'drkmen new'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do
+    @place = Place.new(identifier: SecureRandom.hex(4).upcase)
+    @place.save(validate: false) if @place.valid_attribute?(:identifier)
+    puts "Starting with new property #{@place.identifier}."
+    create_attributes(@place)
+  end
+end
+
+command :continue do |c|
+  c.syntax = 'drkmen continue ABD159SD'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args|
+    @place = Place.find_by(identifier: args[0])
+    if @place
+      puts "Continuing with property #{@place.identifier}."
+      create_attributes(@place)
+    else
+      puts 'No properties found.'
+    end
+  end
+end
+
+def create_attributes(place)
+  attributes = place.attribute_names
+  attributes.each do |attribute_name|
+    unless place[attribute_name] || attribute_name == 'confirmation'
+      while place[attribute_name].nil?
+        input = ''
+        input = ask(PROMPTS[attribute_name.to_sym])
+        place[attribute_name] = input
+        if place.valid_attribute?(attribute_name)
+          place.save(validate: false)
+          place.check_for_confirmation
+        else
+          puts place.errors[attribute_name]
+          place[attribute_name] = nil
+        end
+      end
+    end
+  end
+end
