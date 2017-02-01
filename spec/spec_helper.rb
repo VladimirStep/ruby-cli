@@ -1,3 +1,5 @@
+ENV['RUBY_CLI_ENV'] ||= 'test'
+
 require_relative "support/cli_process"
 
 RSpec.configure do |config|

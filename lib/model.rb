@@ -2,11 +2,14 @@ require 'sqlite3'
 require 'active_record'
 require 'yaml'
 
-# configuration = YAML::load(File.open('./../config/database.yml'))
-# ActiveRecord::Base.configurations = configuration
-# ActiveRecord::Base.establish_connection(:development)
-# ActiveRecord::Base.establish_connection(:test)
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: File.expand_path('../../db/db.sqlite3', __FILE__))
+configuration = YAML::load(File.open(File.expand_path('../../config/database.yml', __FILE__)))
+ActiveRecord::Base.configurations = configuration
+
+if ENV['RUBY_CLI_ENV'] == 'test'
+  ActiveRecord::Base.establish_connection(:test)
+else
+  ActiveRecord::Base.establish_connection(:development)
+end
 
 ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.data_source_exists? 'places'
