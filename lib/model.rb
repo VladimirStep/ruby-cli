@@ -1,7 +1,12 @@
 require 'sqlite3'
 require 'active_record'
+require 'yaml'
 
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: './../db/db.sqlite3')
+# configuration = YAML::load(File.open('./../config/database.yml'))
+# ActiveRecord::Base.configurations = configuration
+# ActiveRecord::Base.establish_connection(:development)
+# ActiveRecord::Base.establish_connection(:test)
+ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: File.expand_path('../../db/db.sqlite3', __FILE__))
 
 ActiveRecord::Schema.define do
   unless ActiveRecord::Base.connection.data_source_exists? 'places'

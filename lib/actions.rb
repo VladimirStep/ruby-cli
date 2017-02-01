@@ -1,3 +1,7 @@
+require 'rubygems'
+require 'commander/import'
+require_relative 'model'
+
 program :name, 'drkmen'
 program :version, '0.0.1'
 program :description, 'Create and list user places via CLI'
@@ -28,7 +32,7 @@ command :new do |c|
   c.example 'description', 'command example'
   c.option '--some-switch', 'Some switch that does something'
   c.action do
-    @place = Place.new(identifier: SecureRandom.hex(4).upcase)
+    @place = Place.new(identifier: generate_identifier)
     @place.save(validate: false) if @place.valid_attribute?(:identifier)
     puts "Starting with new property #{@place.identifier}."
     create_attributes(@place)
@@ -44,12 +48,17 @@ command :continue do |c|
   c.action do |args|
     @place = Place.find_by(identifier: args[0])
     if @place
-      puts "Continuing with #{@place.identifier}."
+      puts "Continuing with property #{@place.identifier}."
       create_attributes(@place)
     else
       puts 'No properties found.'
     end
   end
+end
+
+def generate_identifier
+  charset = Array('A'..'Z') + Array('1'..'9')
+  Array.new(8) { charset.sample }.join
 end
 
 def create_attributes(place)
