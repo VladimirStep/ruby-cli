@@ -21,7 +21,6 @@
 .byebug_history
 
 # Ignore other files
-database.yml
 doc/
 *.swp
 *~
